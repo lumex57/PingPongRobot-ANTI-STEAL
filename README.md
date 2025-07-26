@@ -98,3 +98,6 @@ itemss = [
 
 - 디코 웹훅 전송은은 코드 상단 `webhook = "api_key"` 부분에 본인의 웹훅 URL을 입력해야 작동함
 - 센서값 기준은 70으로 설정되어 있으며, 상황에 따라 조정 가능함
+
+## Special Thanks 
+- [@Requax27](https://github.com/Requax27/)
