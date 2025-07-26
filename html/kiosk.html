@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #f8f8f8;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 360px;
+            padding: 0 16px;
+        }
+        input[type="number"] {
+            font-size: 28px;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            width: 100%;
+            text-align: right;
+            background: white;
+        }
+        .number-input {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+        .number {
+            font-size: 24px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #eee;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .number:active { background: #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>선택한 상품: <span id="itemName"></span></h3>
+        <h3>구매할 수량을 입력하세요.</h3>
+        <input type="number" name="price" id="price" value="0" readonly />
+        <div class="number-input">
+            <button class="number" onclick="addNum(1)">1</button>
+            <button class="number" onclick="addNum(2)">2</button>
+            <button class="number" onclick="addNum(3)">3</button>
+            <button class="number" onclick="addNum(4)">4</button>
+            <button class="number" onclick="addNum(5)">5</button>
+            <button class="number" onclick="addNum(6)">6</button>
+            <button class="number" onclick="addNum(7)">7</button>
+            <button class="number" onclick="addNum(8)">8</button>
+            <button class="number" onclick="addNum(9)">9</button>
+            <button class="number" onclick="confirm()">구매</button>
+            <button class="number" onclick="addNum(0)">0</button>
+            <button class="number" onclick="backspace()">←</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const price = document.getElementById("price");
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const itemName = document.getElementById('itemName');
+        const countt = document.getElementById('price')
+
+        let data = { itemName: "", itemPrice: 0 }
+
+        fetch(`/iteminfo/${id}`)
+            .then(res => res.json())
+            .then(json => {
+                data.itemName = json.name;
+                data.itemPrice = json.price;
+                itemName.innerHTML = `${json.name} - ${json.price}원`;
+            })
+
+        function addNum(n) {
+            price.value = price.value === "0" ? n : price.value + n;
+        }
+
+        function backspace() {
+            price.value = price.value.length <= 1 ? "0" : price.value.slice(0, -1);
+        }
+
+        function confirm() {
+            Swal.fire({
+                title: '확인',
+                text: `1. ${data.itemName} - ${data.itemPrice}₩ (${countt.value}개) = ${data.itemPrice * countt.value}₩`,
+                showCancelButton: true,
+                confirmButtonText: '구매',
+                cancelButtonText: '취소'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    window.location.href = `/success/${id}`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
